@@ -153,171 +153,59 @@ pytest tests/unit/test_aluno.py -v
 
 > **Nunca pule o RED.** Se o teste passou sem você escrever o código — o teste está errado.
 
----
+## Requisito 1 — Contar aprovados
 
-## Requisito 1 — `contar_aprovados()`
+> **Pré-requisito:** confirme que os testes da Parte 1 estão passando antes de começar. Este requisito depende da correção do Bug 2.
 
 **O que deve fazer:**
-Receber uma lista de objetos `Aluno` e retornar quantos foram aprovados.
-
-**Assinatura esperada:**
-```python
-def contar_aprovados(alunos: list) -> int:
-    ...
-```
+Uma função que recebe uma lista de alunos e retorna quantos deles estão aprovados.
 
 **Casos que você deve testar:**
-
-| Cenário | Entrada | Esperado |
-|---|---|---|
-| Todos aprovados | 3 alunos com média >= 6 | 3 |
-| Todos reprovados | 3 alunos com média < 6 | 0 |
-| Misto | 2 aprovados, 1 reprovado | 2 |
-| Lista vazia | `[]` | 0 |
-
-**Passo a passo:**
-
-1. Escreva o primeiro teste (cenário mais simples)
-2. Rode o pytest → deve **falhar** (função não existe)
-3. Implemente o mínimo para passar
-4. Escreva o próximo teste
-5. Repita até cobrir todos os cenários
-
-> **Dica:** a função `contar_aprovados` pode ficar em `calculadora.py`, fora da classe.
+- Uma lista em que todos os alunos estão aprovados
+- Uma lista em que todos os alunos estão reprovados
+- Uma lista mista, com alguns aprovados e outros reprovados
+- Uma lista vazia
 
 ---
 
-## Requisito 2 — `situacao_final()`
+## Requisito 2 — Situação final considerando faltas
 
 **O que deve fazer:**
-Novo método da classe `Aluno` que considera também as **faltas** na situação final.
+Um novo comportamento do aluno que considera também as faltas na situação final, seguindo esta ordem de verificação:
 
-**Assinatura esperada:**
-```python
-def situacao_final(self, total_aulas: int) -> str:
-    ...
-```
+1. Se o percentual de faltas (faltas dividido pelo total de aulas) for **maior que 25%**, o aluno é reprovado por falta — independente da média.
+2. Caso contrário, se a média for maior ou igual a 6.0, o aluno é aprovado.
+3. Caso contrário, o aluno é reprovado por nota.
 
-**Regras:**
-
-| Condição | Retorno |
-|---|---|
-| Faltas > 25% do total de aulas | `"Reprovado por Falta"` |
-| Faltas dentro do limite e média >= 6.0 | `"Aprovado"` |
-| Faltas dentro do limite e média < 6.0 | `"Reprovado por Nota"` |
+> Atenção: a regra é "maior que 25%", não "maior ou igual". Um aluno com exatamente 25% de faltas **não** é reprovado por falta — a verificação segue para a média.
 
 **Casos que você deve testar:**
-
-```python
-# aluno com muitas faltas
-aluno = Aluno(nome="Ana", notas=[8, 9, 8, 9], faltas=10)
-aluno.situacao_final(total_aulas=30)  # → "Reprovado por Falta"
-
-# aluno aprovado
-aluno = Aluno(nome="Ana", notas=[8, 9, 8, 9], faltas=2)
-aluno.situacao_final(total_aulas=30)  # → "Aprovado"
-
-# aluno reprovado por nota
-aluno = Aluno(nome="Ana", notas=[4, 3, 5, 4], faltas=2)
-aluno.situacao_final(total_aulas=30)  # → "Reprovado por Nota"
-
-# caso de borda — exatamente 25% de faltas
-aluno = Aluno(nome="Ana", notas=[8, 9, 8, 9], faltas=8)
-aluno.situacao_final(total_aulas=32)  # → o que deve acontecer aqui?
-```
-
-> **Dica:** pense no caso de borda antes de implementar. Exatamente 25% é reprovado ou não?
+- Um aluno com faltas acima de 25% (deve ser reprovado por falta, mesmo com média alta)
+- Um aluno com poucas faltas e média alta (deve ser aprovado)
+- Um aluno com poucas faltas e média baixa (deve ser reprovado por nota)
+- Um aluno com faltas exatamente em 25% (deve seguir para a verificação da média, não ser reprovado por falta automaticamente)
+- Um aluno com faltas pouco acima de 25% (deve ser reprovado por falta)
 
 ---
 
-## Requisito 3 — `enviar_boletim()` com MagicMock
+## Requisito 3 — Envio de boletim por e-mail
 
 **O que deve fazer:**
-Método da classe `Aluno` que chama um serviço externo de e-mail.
-
-**Assinatura esperada:**
-```python
-def enviar_boletim(self, email_service) -> None:
-    ...
-```
+Um novo comportamento do aluno que aciona um serviço externo de envio de e-mail, mas apenas quando o aluno está reprovado.
 
 **Regras:**
-- Se o aluno estiver **reprovado** → chama `email_service.enviar(nome, media)`
-- Se o aluno estiver **aprovado** → **não** chama o `email_service`
+- Se o aluno estiver reprovado, o serviço de e-mail deve ser chamado, passando o nome do aluno e sua média.
+- Se o aluno estiver aprovado, o serviço de e-mail não deve ser chamado de forma alguma.
+
+**Por que isso exige um cuidado especial:**
+O serviço de e-mail é externo — na vida real ele dispararia uma mensagem de verdade. Nos testes, isso não pode acontecer. Por isso, você vai simular esse serviço com um objeto falso (Mock), que permite verificar se ele foi chamado ou não, sem nunca enviar nada de verdade.
+
+**Casos que você deve testar:**
+- Um aluno reprovado deve acionar o serviço de e-mail
+- Um aluno aprovado não deve acionar o serviço de e-mail
 
 ---
 
-### Por que usar MagicMock?
+## Ao finalizar
 
-O `email_service` na vida real dispararia um e-mail de verdade. Nos testes, não queremos isso. O `MagicMock` é um objeto falso que finge ser o serviço e permite verificar se ele foi chamado.
-
-```python
-from unittest.mock import MagicMock
-
-# criar o serviço falso
-mock_email = MagicMock()
-
-# programar o comportamento (se necessário)
-mock_email.enviar.return_value = True
-
-# verificar se foi chamado
-mock_email.enviar.assert_called_once()
-
-# verificar se foi chamado com argumentos específicos
-mock_email.enviar.assert_called_once_with("João", 4.0)
-
-# verificar se NÃO foi chamado
-mock_email.enviar.assert_not_called()
-```
-
----
-
-### Testes que você deve escrever
-
-**Teste 1 — aluno reprovado deve receber e-mail:**
-```python
-def test_envia_boletim_aluno_reprovado():
-    aluno = Aluno(nome="João", notas=[4, 4, 4, 4])
-    mock_email = MagicMock()
-
-    aluno.enviar_boletim(mock_email)
-
-    # verifique que enviar() foi chamado com os dados corretos
-```
-
-**Teste 2 — aluno aprovado não deve receber e-mail:**
-```python
-def test_nao_envia_boletim_aluno_aprovado():
-    aluno = Aluno(nome="Maria", notas=[8, 8, 8, 8])
-    mock_email = MagicMock()
-
-    aluno.enviar_boletim(mock_email)
-
-    # verifique que enviar() NÃO foi chamado
-```
-
----
-
-## Resultado esperado ao final
-
-```bash
-pytest --cov=src/aluno --cov-report=term-missing
-```
-
-```
-tests/unit/test_aluno.py
-  test_contar_todos_aprovados            PASSED ✓
-  test_contar_todos_reprovados           PASSED ✓
-  test_contar_aprovados_misto            PASSED ✓
-  test_contar_aprovados_lista_vazia      PASSED ✓
-  test_situacao_final_reprovado_falta    PASSED ✓
-  test_situacao_final_aprovado           PASSED ✓
-  test_situacao_final_reprovado_nota     PASSED ✓
-  test_situacao_final_borda_faltas       PASSED ✓
-  test_envia_boletim_aluno_reprovado     PASSED ✓
-  test_nao_envia_boletim_aluno_aprovado  PASSED ✓
-
----------- coverage -----------
-calculadora.py    100%
-```
-
+Confirme que todos os testes da Parte 1 e da Parte 2 estão passando antes de entregar a atividade.
