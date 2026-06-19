@@ -98,7 +98,22 @@ def test_situacao_final_deve_reprovar_por_falta_quando_percentual_for_pouco_maio
 
     assert aluno.situacao_final(total_aulas=11) == "Reprovado por falta"
 
-
 # Requisito 3 — enviar_boletim(email_service)
 # Use MagicMock para simular o serviço de e-mail
 # Escreva os testes ANTES de implementar o método
+def test_enviar_boletim_deve_chamar_servico_quando_aluno_estiver_reprovado():
+    aluno = Aluno(nome="João", notas=[4, 3, 5, 4])
+    email_service = MagicMock()
+
+    aluno.enviar_boletim(email_service)
+
+    email_service.enviar.assert_called_once_with("João", 4.0)
+
+
+def test_enviar_boletim_nao_deve_chamar_servico_quando_aluno_estiver_aprovado():
+    aluno = Aluno(nome="Maria", notas=[8, 9, 7, 8])
+    email_service = MagicMock()
+
+    aluno.enviar_boletim(email_service)
+
+    email_service.enviar.assert_not_called()
