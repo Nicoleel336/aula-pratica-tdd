@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 from aluno.aluno import Aluno
+import aluno.aluno as aluno_module
 
 
 # =============================================================
@@ -34,6 +35,35 @@ def test_aprovacao_com_media_seis():
 
 # Requisito 1 — contar_aprovados(lista_de_alunos) -> int
 # Escreva os testes ANTES de implementar a função
+
+# Testes para contar_aprovados
+def test_contar_aprovados_com_lista_vazia():
+    assert Aluno.contar_aprovados([]) == 0
+
+def test_contar_aprovados_deve_retornar_total_quando_todos_estiverem_aprovados():
+    alunos = [
+        Aluno(nome="Ana", notas=[7, 7, 7, 7]),
+        Aluno(nome="Bia", notas=[8, 8, 8, 8]),
+    ]
+
+    assert aluno_module.contar_aprovados(alunos) == 2
+
+def test_contar_aprovados_deve_retornar_zero_quando_todos_estiverem_reprovados():
+    alunos = [
+        Aluno(nome="Carlos", notas=[4, 4, 4, 4]),
+        Aluno(nome="Diana", notas=[5, 5, 5, 5]),
+    ]
+
+    assert aluno_module.contar_aprovados(alunos) == 0
+
+def test_contar_aprovados_deve_contar_apenas_aprovados_em_lista_mista():
+    alunos = [
+        Aluno(nome="Ana", notas=[7, 7, 7, 7]),
+        Aluno(nome="Carlos", notas=[5, 5, 5, 5]),
+        Aluno(nome="Bia", notas=[6, 6, 6, 6]),
+    ]
+
+    assert aluno_module.contar_aprovados(alunos) == 2
 
 
 # Requisito 2 — situacao_final(total_aulas) -> str
