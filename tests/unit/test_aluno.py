@@ -8,7 +8,9 @@ from aluno.aluno import Aluno
 # Escreva um teste para cada bug descrito no guia da atividade.
 # =============================================================
 
-#
+# Teste retornar menor nota
+def teste_menor_nota(aluno_aprovado):
+    assert aluno_aprovado.menor_nota() == 7
 
 # =============================================================
 # PARTE 2 — Implemente com TDD
