@@ -17,6 +17,12 @@ def test_calcular_media_com_quantidade_variavel_de_notas():
     aluno = Aluno(nome="Nicole", notas=[10,9,8], faltas=1)
     assert aluno.calcular_media() == 9
 
+# Teste calcular média arredondada
+def test_calcular_media_arredondada_valor_decimal(aluno_aprovado):
+    aluno = Aluno(nome="Carlos", notas=[7.5, 8.5, 6.3, 5.4], faltas=2)
+    assert aluno.calcular_media_arredondada() == 7
+
+
 # =============================================================
 # PARTE 2 — Implemente com TDD
 # Siga o ciclo: 🔴 escreva o teste → 🟢 implemente → 🟡 refatore
