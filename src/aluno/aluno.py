@@ -13,8 +13,10 @@ class Aluno:
         return "Reprovado"
 
     def enviar_boletim(self, email_service) -> None:
-        if self.situacao() == "Reprovado":
-            email_service.enviar(self.nome, self.calcular_media())
+        if self.situacao() == "Aprovado":
+            return
+
+        email_service.enviar(self.nome, self.calcular_media())
 
     def situacao_final(self, total_aulas: int) -> str:
         percentual_faltas = self.faltas / total_aulas
