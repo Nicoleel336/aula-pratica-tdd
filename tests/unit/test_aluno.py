@@ -9,8 +9,13 @@ from aluno.aluno import Aluno
 # =============================================================
 
 # Teste retornar menor nota
-def teste_menor_nota(aluno_aprovado):
+def test_menor_nota(aluno_aprovado):
     assert aluno_aprovado.menor_nota() == 7
+
+# Teste calcular média
+def test_calcular_media_com_quantidade_variavel_de_notas():
+    aluno = Aluno(nome="Nicole", notas=[10,9,8], faltas=1)
+    assert aluno.calcular_media() == 9
 
 # =============================================================
 # PARTE 2 — Implemente com TDD
