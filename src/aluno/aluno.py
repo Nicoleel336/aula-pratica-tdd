@@ -13,7 +13,9 @@ class Aluno:
         return "Reprovado"
 
     def situacao_final(self, total_aulas: int) -> str:
-        if self.faltas / total_aulas > 0.25:
+        percentual_faltas = self.faltas / total_aulas
+
+        if percentual_faltas > 0.25:
             return "Reprovado por falta"
         if self.calcular_media() >= 6.0:
             return "Aprovado"
