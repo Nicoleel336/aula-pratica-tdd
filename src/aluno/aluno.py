@@ -21,10 +21,5 @@ class Aluno:
     def calcular_media_arredondada(self) -> float:
         return round(self.calcular_media())
 
-    @staticmethod
-    def contar_aprovados(alunos: list["Aluno"]) -> int:
-        return sum(aluno.situacao() == "Aprovado" for aluno in alunos)
-
-
 def contar_aprovados(alunos: list[Aluno]) -> int:
-    return Aluno.contar_aprovados(alunos)
+    return sum(aluno.situacao() == "Aprovado" for aluno in alunos)

@@ -38,7 +38,7 @@ def test_aprovacao_com_media_seis():
 
 # Testes para contar_aprovados
 def test_contar_aprovados_com_lista_vazia():
-    assert Aluno.contar_aprovados([]) == 0
+    assert aluno_module.contar_aprovados([]) == 0
 
 def test_contar_aprovados_deve_retornar_total_quando_todos_estiverem_aprovados():
     alunos = [
